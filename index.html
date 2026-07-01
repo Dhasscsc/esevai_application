@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>இ-சேவை விண்ணப்பப் படிவம்</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #2563eb;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #cbd5e1;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg); padding: 20px; max-width: 1500px; margin: 0 auto; display: flex; gap: 20px; }
+        
+        .form-container { flex: 1.3; background: var(--surface); padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .sidebar { flex: 0.7; background: var(--surface); padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-height: 90vh; display: flex; flex-direction: column; }
+        
+        header { text-align: center; margin-bottom: 20px; padding: 10px; border-bottom: 2px solid var(--secondary); }
+        header h1 { color: var(--secondary); font-size: 1.6rem; }
+        
+        h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.2rem; background: #e2e8f0; padding: 6px 10px; border-radius: 4px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .full-width { grid-column: span 2; }
+        
+        label { font-weight: 600; font-size: 0.9rem; color: #334155; }
+        input, select, textarea { padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.95rem; }
+        input:focus, select:focus, textarea:focus { border-color: var(--secondary); outline: none; }
+        
+        .declaration-box { background: #fffbeb; border-left: 4px solid #d97706; padding: 12px; margin-bottom: 15px; font-size: 0.85rem; line-height: 1.5; color: #451a03; }
+        
+        /* Dynamic Income Section Entry */
+        #incomeFieldsSection { display: none; background: #f1f5f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px dashed var(--secondary); }
+        .member-row { display: grid; grid-template-columns: 0.4fr 2fr 1.2fr 0.8fr 1.2fr; gap: 8px; margin-bottom: 8px; align-items: center; }
+
+        button { padding: 12px; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; color: white; background: var(--secondary); width: 100%; }
+        button:hover { background: #1d4ed8; }
+        
+        .blank-print-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; padding: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; }
+        .btn-blank { background: var(--success); font-size: 0.9rem; padding: 8px; }
+        .btn-blank:hover { background: #15803d; }
+
+        .history-list { overflow-y: auto; flex: 1; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .history-item { border: 1px solid var(--border); padding: 12px; border-radius: 6px; background: #f8fafc; cursor: pointer; transition: all 0.2s; }
+        .history-item:hover { border-color: var(--secondary); background: #f1f5f9; }
+        .search-box { padding: 8px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 4px; width: 100%; }
+
+        /* 100% EXACT PRINT STYLES */
+        #print-area { display: none; }
+        @media print {
+            html, body { background: #fff !important; background-color: #fff !important; }
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { 
+                display: block !important; 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                padding: 10px 15px !important; 
+                background: #fff !important; 
+                color: #000; 
+            }
+            .page-1 { page-break-after: always; }
+            .page-2 { page-break-before: always; margin-top: 20px; display: none; }
+            .show-page-2 { display: block !important; }
+
+            .p-header { text-align: center; margin-bottom: 15px; line-height: 1.3; }
+            .p-header h1 { font-size: 1.6rem; font-weight: bold; text-decoration: underline; text-transform: uppercase; }
+            
+            .p-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; background: #fff !important; }
+            .p-table th, .p-table td { border: 1px solid #000 !important; padding: 10px 8px !important; text-align: left; vertical-align: middle; background: #fff !important; color: #000 !important; height: 38px; }
+            .p-table th { font-weight: bold; text-align: center; background: #f2f2f2 !important; }
+            
+            .p-decl { margin-top: 25px; font-size: 0.85rem; line-height: 1.4; text-align: justify; border: 1px solid #000 !important; padding: 10px; border-radius: 4px; background: #fff !important; }
+            .p-footer { display: flex; justify-content: space-between; margin-top: 50px; font-size: 1rem; }
+            
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LEFT: FORM ENTRY -->
+    <div class="form-container">
+        <header>
+            <h1>இ-சேவை பொது விண்ணப்பப் படிவம்</h1>
+        </header>
+
+        <h2>விண்ணப்ப விபரங்கள் (Data Entry)</h2>
+        <form id="esevaiForm">
+            <div class="grid">
+                <div class="form-group full-width">
+                    <label>விண்ணப்பிக்கும் சான்றுகளின் பெயர்கள் (தேவைப்படும் சான்றிதழ்கள்):</label>
+                    <input type="text" id="certNames" required placeholder="உதா: வருமான சான்றிதழ், ஜாதி சான்றிதழ்" oninput="checkCertificateType()">
+                </div>
+                
+                <div class="form-group">
+                    <label>1. விண்ணப்பதாரர் பெயர் (தமிழில்):</label>
+                    <input type="text" id="nameTa" required>
+                </div>
+                <div class="form-group">
+                    <label>விண்ணப்பதாரர் பெயர் (ENGLISH):</label>
+                    <input type="text" id="nameEn" required style="text-transform: uppercase;">
+                </div>
+
+                <!-- ADDED: FATHER / HUSBAND OPTION SELECTOR -->
+                <div class="form-group full-width">
+                    <label>உறவுமுறை தேர்வு (தந்தை / கணவர்):</label>
+                    <select id="fatherOrHusband" required onchange="updateLabelTexts()">
+                        <option value="தந்தை">தந்தை (Father)</option>
+                        <option value="கணவர்">கணவர் (Husband)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="lblFatherTa">2. தந்தை பெயர் (தமிழில்):</label>
+                    <input type="text" id="fatherTa" required>
+                </div>
+                <div class="form-group">
+                    <label id="lblFatherEn">தந்தை பெயர் (ENGLISH):</label>
+                    <input type="text" id="fatherEn" required style="text-transform: uppercase;">
+                </div>
+
+                <div class="form-group">
+                    <label>3. தாயார் பெயர் (தமிழில்):</label>
+                    <input type="text" id="motherTa" required>
+                </div>
+                <div class="form-group">
+                    <label>தாயார் பெயர் (ENGLISH):</label>
+                    <input type="text" id="motherEn" required style="text-transform: uppercase;">
+                </div>
+
+                <div class="form-group">
+                    <label>4.த் தொழில்:</label>
+                    <input type="text" id="occupation" required>
+                </div>
+                <div class="form-group">
+                    <label>5. மதம் & சாதி:</label>
+                    <input type="text" id="religionCaste" required placeholder="உதா: இந்து, பிசி">
+                </div>
+                <div class="form-group">
+                    <label>6. பாலினம்:</label>
+                    <select id="gender" required>
+                        <option value="ஆண்">ஆண்</option>
+                        <option value="பெண்">பெண்</option>
+                        <option value="இதர">இதர</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>7. பிறந்த நாள் (DOB):</label>
+                    <input type="date" id="dob" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>8. வீட்டு முகவரி:</label>
+                    <textarea id="address" rows="2" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>9. வருவாய் கிராமம்:</label>
+                    <input type="text" id="village" required>
+                </div>
+                <div class="form-group">
+                    <label>10. கைபேசி எண்:</label>
+                    <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="10 இலக்க எண்">
+                </div>
+            </div>
+
+            <!-- DYNAMIC INCOME MEMBER SECTION -->
+            <div id="incomeFieldsSection">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="color: #b45309;">👥 11. குடும்ப உறுப்பினர்களின் வருமான விபரம்:</label>
+                    <div>
+                        <span style="font-size: 0.85rem; font-weight: bold;">உறுப்பினர்கள் எண்ணிக்கை: </span>
+                        <select id="memberCount" onchange="generateMemberInputs()">
+                            <option value="1">1 (மனுதாரர் மட்டும்)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="memberInputsContainer">
+                    <!-- Dynamic Rows Go Here -->
+                </div>
+            </div>
+
+            <div class="declaration-box">
+                <strong>✍️ சுய உறுதிமொழி (Declaration):</strong><br>
+                என்னால் வழங்கப்பட்ட தகவல்கள் அனைத்தும் நான் அறிந்த வகையில் உண்மை எனவும், எந்த தகவல்களும் என்னால் மறைக்கப்படவில்லை எனவும், நான் அளித்த தகவல்கள் / ஆவணங்கள் உண்மைக்கு புறம்பானவை என பின்னாளில் தெரியவரும் பட்சத்தில், இந்திய தண்டனைச் சட்டம் 177 மற்றும் 199-ன் கீழ் எனக்கு எதிராக சட்டரீதியான நடவடிக்கை மேற்கொள்ளப்படும் என்பதை அறிவேன் என்று சுயநினைவோடு உறுதியளிக்கிறேன்.
+            </div>
+
+            <button type="submit">💾 விண்ணப்பத்தை சேமி & பிரிண்ட் எடு</button>
+        </form>
+    </div>
+
+    <!-- RIGHT: SIDEBAR SAVED APPLICATIONS & BLANK PRINT -->
+    <div class="sidebar">
+        <h2>அச்சு வசதிகள்</h2>
+        <div class="blank-print-box">
+            <button type="button" class="btn-blank" onclick="printBlankForm(false)">🖨️ வெற்று படிவம் பிரிண்ட் (Blank Form)</button>
+            <button type="button" class="btn-blank" onclick="printBlankForm(true)" style="background:#b45309;">🖨️ வருமான படிவம் பிரிண்ட் (Income Form)</button>
+        </div>
+
+        <h2>பதிவு செய்யப்பட்ட விண்ணப்பங்கள்</h2>
+        <input type="text" id="search" class="search-box" placeholder="பெயர் / போன் மூலம் தேட..." oninput="loadData()">
+        <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- PRINT LAYOUT AREA -->
+    <div id="print-area">
+        <!-- PAGE 1: BASIC DETAILS -->
+        <div class="page-1">
+            <div class="p-header">
+                <h1>இ-சேவை விண்ணப்பப் படிவம்</h1>
+            </div>
+
+            <table class="p-table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">வ.எண்</th>
+                        <th style="width: 42%;">விபரங்கள்</th>
+                        <th style="width: 50%;">பூர்த்தி செய்யப்பட்ட விபரம்</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;">-</td>
+                        <td><strong>விண்ணப்பிக்கும் சான்றுகளின் பெயர்கள்</strong></td>
+                        <td><strong id="pCerts"></strong></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">1.</td>
+                        <td>விண்ணப்பதாரர் பெயர் : <br>தமிழில் / ENGLISH</td>
+                        <td><span id="pNameTa"></span><br><span id="pNameEn" style="text-transform: uppercase; font-weight: bold;"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">2.</td>
+                        <td><span id="pFatherLabel">தந்தை பெயர்</span> : <br>தமிழில் / ENGLISH</td>
+                        <td><span id="pFatherTa"></span><br><span id="pFatherEn" style="text-transform: uppercase;"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">3.</td>
+                        <td>தாயார் பெயர் : <br>தமிழில் / ENGLISH</td>
+                        <td><span id="pMotherTa"></span><br><span id="pMotherEn" style="text-transform: uppercase;"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">4.</td>
+                        <td>தொழில்</td>
+                        <td id="pOccupation"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">5.</td>
+                        <td>மதம் & சாதி</td>
+                        <td id="pReligionCaste"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">6.</td>
+                        <td>பாலினம்</td>
+                        <td id="pGender"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">7.</td>
+                        <td>பிறந்த நாள் (DOB)</td>
+                        <td id="pDob"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">8.</td>
+                        <td>வீட்டு முகவரி</td>
+                        <td id="pAddress" style="line-height: 1.4;"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">9.</td>
+                        <td>வருவாய் கிராமம்</td>
+                        <td id="pVillage"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">10.</td>
+                        <td>கைபேசி எண்</td>
+                        <td id="pPhone" style="font-weight: bold;"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="p-decl">
+                <strong>சுய உறுதிமொழி:</strong> என்னால் வழங்கப்பட்ட தகவல்கள் அனைத்தும் நான் அறிந்த வகையில் உண்மை எனவும், எந்த தகவல்களும் என்னால் மறைக்கப்படவில்லை எனவும், நான் அளித்த தகவல்கள் / ஆவணங்கள் உண்மைக்கு புறம்பானவை என பின்னாளில் தெரியவரும் பட்சத்தில், இந்திய தண்டனைச் சட்டம் 177 மற்றும் 199-ன் கீழ் எனக்கு எதிராக சட்டரீதியான நடவடிக்கை மேற்கொள்ளப்படும் என்பதை அறிவேன் என்று சுயநினைவோடு உறுதியளிக்கிறேன்.
+            </div>
+
+            <div class="p-footer">
+                <div><strong>நாள் :</strong> <span id="pCurrentDate1"></span></div>
+                <div><strong>மனுதாரரின் கையொப்பம்</strong></div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: INCOME MEMBER DETAILS (CONDITIONAL) -->
+        <div class="page-2" id="pPage2">
+            <div class="p-header">
+                <h1>இ-சேவை விண்ணப்பப் படிவம் (வருமான விபரம்)</h1>
+            </div>
+            
+            <p style="font-weight: bold; margin-top: 10px; font-size: 1.05rem;">11. குடும்ப உறுப்பினர்களின் வருமான விபரம்:</p>
+            <table class="p-table" style="margin-top: 8px;">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">வ.எண்</th>
+                        <th style="width: 37%;">பெயர்</th>
+                        <th style="width: 20%;">உறவுமுறை</th>
+                        <th style="width: 15%;">வயது</th>
+                        <th style="width: 20%;">மாத வருமானம்</th>
+                    </tr>
+                </thead>
+                <tbody id="pIncomeTableBody">
+                    <!-- Dynamic rows inserted via JS -->
+                </tbody>
+            </table>
+
+            <div class="p-decl">
+                <strong>சுய உறுதிமொழி:</strong> என்னால் வழங்கப்பட்ட தகவல்கள் அனைத்தும் நான் அறிந்த வகையில் உண்மை எனவும், எந்த தகவல்களும் என்னால் மறைக்கப்படவில்லை எனவும், நான் அளித்த தகவல்கள் / ஆவணங்கள் உண்மைக்கு புறம்பானவை என பின்னாளில் தெரியவரும் பட்சத்தில், இந்திய தண்டனைச் சட்டம் 177 மற்றும் 199-ன் கீழ் எனக்கு எதிராக சட்டரீதியான நடவடிக்கை மேற்கொள்ளப்படும் என்பதை அறிவேன் என்று சுயநினைவோடு உறுதியளிக்கிறேன்.
+            </div>
+
+            <div class="p-footer">
+                <div><strong>நாள் :</strong> <span id="pCurrentDate2"></span></div>
+                <div><strong>மனுதாரரின் கையொப்பம்</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let db;
+        const request = indexedDB.open("EsevaiFormDB", 1);
+        
+        request.onupgradeneeded = (e) => {
+            db = e.target.result;
+            db.createObjectStore("applications", { keyPath: "id", autoIncrement: true });
+        };
+        request.onsuccess = (e) => { db = e.target.result; loadData(); };
+
+        // Dynamic Text Form Label Switcher
+        function updateLabelTexts() {
+            const relType = document.getElementById('fatherOrHusband').value;
+            if(relType === "கணவர்") {
+                document.getElementById('lblFatherTa').innerText = "2. கணவர் பெயர் (தமிழில்):";
+                document.getElementById('lblFatherEn').innerText = "கணவர் பெயர் (ENGLISH):";
+            } else {
+                document.getElementById('lblFatherTa').innerText = "2. தந்தை பெயர் (தமிழில்):";
+                document.getElementById('lblFatherEn').innerText = "தந்தை பெயர் (ENGLISH):";
+            }
+        }
+
+        // Auto-detect Income Certificate
+        function checkCertificateType() {
+            const certText = document.getElementById('certNames').value.toLowerCase();
+            const section = document.getElementById('incomeFieldsSection');
+            if (certText.includes('வருமானம்') || certText.includes('income')) {
+                section.style.display = 'block';
+                if(document.getElementById('memberInputsContainer').children.length === 0) {
+                    generateMemberInputs();
+                }
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        // Generate Input Forms dynamically based on count
+        function generateMemberInputs() {
+            const count = parseInt(document.getElementById('memberCount').value);
+            const container = document.getElementById('memberInputsContainer');
+            container.innerHTML = "";
+
+            const applicantName = document.getElementById('nameTa').value || "மனுதாரர்";
+
+            for (let i = 1; i <= count; i++) {
+                const row = document.createElement('div');
+                row.className = 'member-row';
+                
+                const isFirst = (i === 1);
+                row.innerHTML = `
+                    <span>${i}.</span>
+                    <input type="text" class="m-name" placeholder="பெயர்" value="${isFirst ? applicantName : ''}" required>
+                    <input type="text" class="m-rel" placeholder="உறவுமுறை" value="${isFirst ? 'மனுதாரர்' : ''}" ${isFirst ? 'readonly' : ''} required>
+                    <input type="number" class="m-age" placeholder="வயது" required>
+                    <input type="number" class="m-inc" placeholder="வருமானம்" required>
+                `;
+                container.appendChild(row);
+            }
+        }
+
+        // Handle Submit
+        document.getElementById('esevaiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isIncome = document.getElementById('incomeFieldsSection').style.display === 'block';
+            const members = [];
+            
+            if (isIncome) {
+                const rows = document.querySelectorAll('.member-row');
+                rows.forEach(row => {
+                    members.push({
+                        name: row.querySelector('.m-name').value,
+                        rel: row.querySelector('.m-rel').value,
+                        age: row.querySelector('.m-age').value,
+                        inc: row.querySelector('.m-inc').value
+                    });
+                });
+            }
+            
+            const record = {
+                certNames: document.getElementById('certNames').value,
+                nameTa: document.getElementById('nameTa').value,
+                nameEn: document.getElementById('nameEn').value,
+                fatherOrHusband: document.getElementById('fatherOrHusband').value, // Saved relationship type
+                fatherTa: document.getElementById('fatherTa').value,
+                fatherEn: document.getElementById('fatherEn').value,
+                motherTa: document.getElementById('motherTa').value,
+                motherEn: document.getElementById('motherEn').value,
+                occupation: document.getElementById('occupation').value,
+                religionCaste: document.getElementById('religionCaste').value,
+                gender: document.getElementById('gender').value,
+                dob: document.getElementById('dob').value,
+                address: document.getElementById('address').value,
+                village: document.getElementById('village').value,
+                phone: document.getElementById('phone').value,
+                isIncome: isIncome,
+                members: members,
+                date: new Date().toLocaleDateString('en-GB')
+            };
+
+            const tx = db.transaction("applications", "readwrite");
+            tx.objectStore("applications").add(record);
+            
+            tx.oncomplete = () => {
+                alert("விண்ணப்ப விபரங்கள் வெற்றிகரமாகச் சேமிக்கப்பட்டன!");
+                loadData();
+                printApplication(record);
+                document.getElementById('esevaiForm').reset();
+                updateLabelTexts(); // Reset labels back to Father
+                document.getElementById('incomeFieldsSection').style.display = 'none';
+                document.getElementById('memberInputsContainer').innerHTML = "";
+            };
+        });
+
+        function loadData() {
+            const searchQ = document.getElementById('search').value.toLowerCase();
+            const list = document.getElementById('historyList');
+            list.innerHTML = "";
+
+            db.transaction("applications", "readonly").objectStore("applications").openCursor(null, "prev").onsuccess = (e) => {
+                const cursor = e.target.result;
+                if(cursor) {
+                    const v = cursor.value;
+                    if(v.nameTa.toLowerCase().includes(searchQ) || v.phone.includes(searchQ)) {
+                        const div = document.createElement('div');
+                        div.className = "history-item";
+                        div.onclick = () => printApplication(v);
+                        div.innerHTML = `
+                            <strong>${v.nameTa}</strong><br>
+                            <small>📱 ${v.phone} | 📄 ${v.certNames}<br>📅 தேதி: ${v.date}</small>
+                        `;
+                        list.appendChild(div);
+                    }
+                    cursor.continue();
+                }
+            };
+        }
+
+        function printApplication(v) {
+            document.getElementById('pCerts').innerText = v.certNames;
+            document.getElementById('pNameTa').innerHTML = v.nameTa ? v.nameTa : '&nbsp;';
+            document.getElementById('pNameEn').innerHTML = v.nameEn ? v.nameEn : '&nbsp;';
+            
+            // Dynamic Header in Print Table Based on Data
+            const pRelType = v.fatherOrHusband || "தந்தை";
+            document.getElementById('pFatherLabel').innerText = pRelType + " பெயர்";
+
+            document.getElementById('pFatherTa').innerHTML = v.fatherTa ? v.fatherTa : '&nbsp;';
+            document.getElementById('pFatherEn').innerHTML = v.fatherEn ? v.fatherEn : '&nbsp;';
+            document.getElementById('pMotherTa').innerHTML = v.motherTa ? v.motherTa : '&nbsp;';
+            document.getElementById('pMotherEn').innerHTML = v.motherEn ? v.motherEn : '&nbsp;';
+            document.getElementById('pOccupation').innerHTML = v.occupation ? v.occupation : '&nbsp;';
+            document.getElementById('pReligionCaste').innerHTML = v.religionCaste ? v.religionCaste : '&nbsp;';
+            document.getElementById('pGender').innerHTML = v.gender ? v.gender : '&nbsp;';
+            document.getElementById('pDob').innerHTML = v.dob ? v.dob.split('-').reverse().join('/') : '&nbsp;';
+            document.getElementById('pAddress').innerHTML = v.address ? v.address : '&nbsp;';
+            document.getElementById('pVillage').innerHTML = v.village ? v.village : '&nbsp;';
+            document.getElementById('pPhone').innerHTML = v.phone ? v.phone : '&nbsp;';
+            document.getElementById('pCurrentDate1').innerText = v.date || new Date().toLocaleDateString('en-GB');
+
+            const pPage2 = document.getElementById('pPage2');
+            const tbody = document.getElementById('pIncomeTableBody');
+            tbody.innerHTML = "";
+
+            if (v.isIncome) {
+                pPage2.classList.add('show-page-2');
+                document.getElementById('pCurrentDate2').innerText = v.date || new Date().toLocaleDateString('en-GB');
+                
+                if (v.members && v.members.length > 0) {
+                    v.members.forEach((m, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="text-align:center;">${idx + 1}</td>
+                            <td>${m.name}</td>
+                            <td>${m.rel}</td>
+                            <td style="text-align:center;">${m.age}</td>
+                            <td style="text-align:right;">₹ ${m.inc} /-</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    for (let i = 1; i <= 6; i++) {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td style="text-align:center;">${i}</td><td></td><td></td><td></td><td></td>`;
+                        tbody.appendChild(tr);
+                    }
+                }
+            } else {
+                pPage2.classList.remove('show-page-2');
+            }
+
+            window.print();
+        }
+
+        // Handle Blank Form Printing
+        function printBlankForm(includeIncomePage) {
+            const blankRecord = {
+                certNames: "", nameTa: "", nameEn: "", fatherOrHusband: "தந்தை / கணவர்", fatherTa: "", fatherEn: "",
+                motherTa: "", motherEn: "", occupation: "", religionCaste: "",
+                gender: "", dob: "", address: "", village: "", phone: "",
+                isIncome: includeIncomePage, members: [],
+                date: new Date().toLocaleDateString('en-GB')
+            };
+            printApplication(blankRecord);
+        }
+    </script>
+</body>
+</html>
